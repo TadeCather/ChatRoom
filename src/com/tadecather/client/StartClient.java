@@ -9,12 +9,12 @@ package com.tadecather.client;
  */
 public class StartClient {
 
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		
 		//创建client客户端窗口
 		@SuppressWarnings("unused")
 		ClientUI clientUI = new ClientUI();
-
+		      
 	}
 
 }

@@ -1,0 +1,9 @@
+--CREATE DATABASE chatroom;
+USE chatroom;
+CREATE TABLE userAccount(
+userID INT(12) PRIMARY KEY AUTO_INCREMENT,
+userPasswd VARCHAR(20) DEFAULT "123456",
+userName VARCHAR(40),
+signUpTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);
+
+INSERT INTO userAccount values(10000, "iloveyou", "test1");

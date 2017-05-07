@@ -7,50 +7,54 @@ import java.util.Date;
 public class User implements Serializable{
 
 	/**
-	 * 
+	 * User,主要存储用户的基本信息
+	 * account，passwd，name，signuptime。
 	 */
 	
-	private int user_ID;
-	private String user_passwd;
-	private String user_name;
-	private Date data;
+	private String userAccount;
+	private String userPasswd;
+	private String userName;
+	private Date signUpTime;
 	
 	
-	public User(int user_ID, String user_passwd, String user_name) {
-		this.user_ID = user_ID;
-		this.user_passwd = user_passwd;
-		this.user_name = user_name;
+	public User(String userAccount, String userPasswd, String userName, Date signUpTime) {
+		this.userAccount = userAccount;
+		this.userPasswd = userPasswd;
+		this.userName = userName;
+		this.signUpTime = signUpTime;
 	}
-	
 	
 	//空白构造方法
-	public User() {
+	public User(){
+		
 	}
-
-
-	public int getUser_ID() {
-		return user_ID;
+	public String getUserAccount() {
+		return userAccount;
 	}
-	public void setUser_ID(int user_ID) {
-		this.user_ID = user_ID;
+	public void setUserAccount(String userAccount) {
+		this.userAccount = userAccount;
 	}
-	public String getUser_passwd() {
-		return user_passwd;
+	public String getUserPasswd() {
+		return userPasswd;
 	}
-	public void setUser_passwd(String user_passwd) {
-		this.user_passwd = user_passwd;
+	public void setUserPasswd(String userPasswd) {
+		this.userPasswd = userPasswd;
 	}
-	public String getUser_name() {
-		return user_name;
+	public String getUserName() {
+		return userName;
 	}
-	public void setUser_name(String user_name) {
-		this.user_name = user_name;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
-	public Date getData() {
-		return data;
+	public Date getSignUpTime() {
+		return signUpTime;
 	}
-	public void setData(Date data) {
-		this.data = data;
+	public void setSignUpTime(Date signUpTime) {
+		this.signUpTime = signUpTime;
 	}
+	
+	
+	
+	
 	
 }

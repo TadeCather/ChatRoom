@@ -12,6 +12,9 @@ import java.net.UnknownHostException;
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 
+import com.sun.corba.se.impl.encoding.BufferManagerFactory;
+import com.tadecather.unity.User;
+
 /**
  * 客户端的登陆UI
  * @author TAD
@@ -44,7 +47,13 @@ public class ClientUI extends JFrame{
 	
 	private String data = null;
 	
-	public boolean isDataChange = false;
+	public boolean isLogin = false;
+	
+	//重复登录标识码
+	private int isLogined = 0;
+	
+	public User userCurrent = null;
+	
 	
 	public static boolean isConnect = false;
 	
@@ -71,12 +80,12 @@ public class ClientUI extends JFrame{
 	
 		panelName.add(JLname);
 		panelName.add(JTnameInput);
-		JTnameInput.setText("14130130229");
+		JTnameInput.setText("1");
 		panelName.setOpaque(false);
 		
 		panelPasswd.add(JLpasswd);
 		panelPasswd.add(JTpassswdInput);
-		JTpassswdInput.setText("030290");
+		JTpassswdInput.setText("iloveyou");
 		panelPasswd.setOpaque(false);
 		
 		panelButton.add(JBlogin);
@@ -117,13 +126,17 @@ public class ClientUI extends JFrame{
 				
 				
 				//将主线程阻塞在此，直到接收到服务器消息
-				while(isConnect){
+				while(true){
 					//如果data的值不是null，就执行操作，并跳出循环
-					if(data != null){
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+					if(isLogin){
+						
 						action();
 						//将返回的消息重置为空
-						data = null;
-						
 						break;
 					}
 				}
@@ -180,43 +193,53 @@ public class ClientUI extends JFrame{
 		String name = JTnameInput.getText();
 		String passwd = JTpassswdInput.getText();
 		System.out.println("Name=" + name + " passwd: " + passwd);
-		String logMes = name + passwd;
+		String logMes = String.format("%-12s", name) + String.format("%-20s",passwd);
+		System.out.println(logMes+"-");
+		//请求登陆类型10
+		sendMessage((String.valueOf(10) + logMes).getBytes());
 		
-		sendMessage(logMes);
 	}
 	
 	//发送信息
-	public void sendMessage(String mes){
+	public void sendMessage(byte[] message){
+		System.out.println(message.length);
 		if(isConnect){
 			try {
-				
-				
-				dos.writeUTF(mes);
-				//使当前的线程阻塞500毫秒
-				
-				Thread.sleep(100);
-				
+				dos.write(message, 0, message.length);
+				//使当前的线程阻塞200毫秒
+				Thread.sleep(200);
 			} catch (IOException e) {
-				System.out.println("登陆失败！");
 				e.printStackTrace();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
+				}
+			}else{
+				System.out.println("FUCK YOU");
 		}
 		
 	}
 	
-	//判端数据的正确性，然后执行相应的步骤
+	//然后执行登陆成功后相应的步骤
 	public void action(){
-		if(data.equals("登陆成功，欢迎你！")){
-			
-			this.setVisible(false);
-			new ChatChooseUI(this);
-			
-		}else{
-			JTpassswdInput.setText("");
-			System.out.println("登陆失败！");
+		
+		//便于服务端保存自己socket的自己账号
+		sendMessage((String.valueOf(19) + String.format("%-12s", JTnameInput.getText())+ "tadecather").getBytes());
+		
+		while(true){
+			if(isLogined == 1){
+				userCurrent = new User();
+				userCurrent.setUserAccount(JTnameInput.getText());
+				this.setVisible(false);
+				new ChatChooseUI(this);
+				break;
+			}
+			if(isLogined == 2){
+				disConnect();
+				break;
+			}
 		}
+		
+		
 	}
 	
 	
@@ -231,21 +254,63 @@ public class ClientUI extends JFrame{
 		}
 		
 		public void run() {
-			
+			byte[] bufferMes = new byte[1024];
 			while (isConnect){
-				try { 
-					data = dis.readUTF();
-					System.out.println("我是客户端，服务器端的响应是：" + data);
-					isDataChange = true;
+				if(dis != null){
+					try { 
+						dis.read(bufferMes, 0, 2);
+					
+						int mesType = Integer.parseInt(new String(bufferMes).trim());
+						
+						System.out.println("MessageType:" + mesType);
+						
+						
+						
+						switch(mesType){
+							
+							case 90 : {String str1 = readSomething();isLogin = true; System.out.println(str1); break;}
+							case 91 : {String str1 = readSomething();System.out.println("登陆失败！");JTpassswdInput.setText("");System.out.println(str1); break;}
+							case 92 : {String str1 = readSomething();InputAccountUI.isFriendexist = 1;System.out.println(str1);break;}
+							case 93 : {String str1 = readSomething();InputAccountUI.isFriendexist = 2;System.out.println("好友不存在，请重新选择！");System.out.println(str1);break;}
+							case 94 : {String str1 = readSomething();isLogined = 1;System.out.println("服务器准备工作做好了");System.out.println(str1);break;}
+							case 95 : {String str1 = readSomething();isLogined = 2;System.out.println(str1);System.out.println("请不要重复登录同一个账号！");break;}
+							
+							case 80 : {receiveOthersMes();break;}
+							default : {System.out.println("Error Information from Server");}
+							}
+						
+						
+						
+						
+						
 				} catch (IOException e) {
-					e.printStackTrace();
-				}
+					
+					isConnect = false;
+					}
+			
 				
+				}
 			}
-		}
 		
-	}
+		}
+        private void receiveOthersMes() throws IOException {
+        	byte[] bufferMes = new byte[1024];
+			dis.read(bufferMes, 0, 12);
+			ChatUI.messageowenAccount = new String(bufferMes).trim();
+			System.out.println(ChatUI.messageowenAccount);
+			int length = dis.read(bufferMes, 0, bufferMes.length);
+			System.out.println("MesLength: " + length);
+			ChatUI.messagefromOther = new String(bufferMes).trim();	
+		}
+
+		//读取剩余的信息
+		private String readSomething() throws IOException {
+			byte[] bufferMessage = new byte[1024];
+			dis.read(bufferMessage,0,bufferMessage.length);
+			return new String(bufferMessage).trim();
+			
+		}
 	
-	
-	
+	}	
+
 }

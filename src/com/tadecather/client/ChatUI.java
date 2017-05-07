@@ -27,10 +27,16 @@ public class ChatUI extends JFrame{
 	private ChatChooseUI ccu = null;
 	private ClientUI cu = null;
 	
-	public ChatUI(ChatChooseUI ccu,ClientUI cu){
-		
+	private String friendAccount;
+	
+	public static String messageowenAccount = null;
+	public static String messagefromOther = null;
+	
+	public ChatUI(String friendAccount,ChatChooseUI ccu,ClientUI cu){
+		this.friendAccount = friendAccount;
 		this.ccu = ccu;
 		this.cu = cu;
+		
 		
 		messages.setLineWrap(true);
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -42,7 +48,7 @@ public class ChatUI extends JFrame{
 		
 		this.setSize(500, 800);
 		this.setLocation(500,175);
-		this.setTitle("Chat with Somebody");
+		this.setTitle("Chat with " + friendAccount);
 		this.setResizable(false);
 		this.setVisible(true);
 		
@@ -82,9 +88,15 @@ public class ChatUI extends JFrame{
 
 	protected void send() {
 		String mes = message.getText();
-		
+		byte[] mesText = new byte[1024];
 		if(!mes.equals("")){
-			cu.sendMessage(mes);
+			
+			//∆’Õ®–≈œ¢ 12
+			mesText = ("12" + String.format("%-12s", cu.userCurrent.getUserAccount())
+				+ String.format("%-12s",friendAccount) + mes).getBytes();
+			
+			cu.sendMessage(mesText);
+	
 			messages.append(new Date() + "\n" + mes + "\n" +"\n");
 		}
 		message.setText("");
@@ -107,19 +119,21 @@ public class ChatUI extends JFrame{
 		@Override
 		public void run() {
 			while(ClientUI.isConnect){
-				
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-			
-				if(cu.getData() !=  null){
-					System.out.println("-------------" + cu.getData());
-					messages.append(new Date() + "\n" + cu.getData() + "--Others--\n");
+				if((messagefromOther != null)&&(messageowenAccount != null)){
+					System.out.println("-------------" + messagefromOther);
+					messages.append("From " + messageowenAccount +  new Date() + "\n" + messagefromOther + "\n");
 					
-					cu.setData(null);
+					messagefromOther = null;
+					messageowenAccount = null;
 				}
+			
+					
+
 			
 			}
 			

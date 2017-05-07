@@ -3,6 +3,7 @@ package com.tadecather.client;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Date;
 
 import com.tadecather.unity.User;
 
@@ -19,7 +20,7 @@ public class TestTransportObject {
 		ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 		
 		
-		User user = new User(666,"030290","´ó°×");
+		User user = new User("666","030290","´ó°×",new Date());
 		
 		oos.writeObject(user);
 		

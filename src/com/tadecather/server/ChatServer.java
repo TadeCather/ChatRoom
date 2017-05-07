@@ -7,7 +7,9 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -17,13 +19,9 @@ import java.util.List;
  */
 public class ChatServer {
 	
+	//一个保存socket和与他对应账号的Map
+	public static Map<String, ServerThread> asMap = new HashMap<String, ServerThread>();
 	
-	public static List<ServerThread> stList = new ArrayList<ServerThread>();
-	
-	
-	
-	
-
 	public ChatServer(){
 		Socket socket = null;
 		int count = 0;
@@ -41,8 +39,7 @@ public class ChatServer {
 				
 				st = new ServerThread(socket);
 				st.start();
-				stList.add(st);
-				
+
 				InetAddress address =socket.getInetAddress();
 				System.out.println("地址是：" + address.getHostAddress());
 				System.out.println("客户端" + (++count) + "号！");

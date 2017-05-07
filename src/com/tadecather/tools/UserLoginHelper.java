@@ -10,16 +10,20 @@ public class UserLoginHelper {
 	
 
 	public static void main(String[] args) throws SQLException {
-		DBOperate dbo = new DBOperate();
-		List<User> users = dbo.getAllUser();
-		for(User user : users){
-			System.out.println(user.getUser_ID() + "\t" + user.getUser_name() + "\t"
-					+ user.getUser_passwd());
-		}
+//		DBOperate dbo = new DBOperate();
+//		List<User> users = dbo.getAllUser();
+//		for(User user : users){
+//			System.out.println(user.getUserAccount() + "\t" + user.getUserName() + "\t"
+//					+ user.getUserAccount());
+//		}
+//		
+//		
+//		User user = dbo.getUserByID("1");
+//		System.out.println(user.getUserAccount() + "\t" + user.getUserName() + "\t"
+//				+ user.getUserPasswd());
 		
-		User user = dbo.getUserByID(666);
-		System.out.println(user.getUser_ID() + "\t" + user.getUser_name() + "\t"
-				+ user.getUser_passwd());
-	}
+		Boolean b = new DBOperate().checkIsFrind("10000", "1");
+		System.out.println(b);
+		}
 	
 }
