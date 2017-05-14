@@ -1,15 +1,11 @@
 package com.tadecather.tools;
 
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
-import java.util.List;
-
-import com.tadecather.unity.User;
 
 public class UserLoginHelper {
-	
-	
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, FileNotFoundException {
 //		DBOperate dbo = new DBOperate();
 //		List<User> users = dbo.getAllUser();
 //		for(User user : users){
@@ -22,8 +18,19 @@ public class UserLoginHelper {
 //		System.out.println(user.getUserAccount() + "\t" + user.getUserName() + "\t"
 //				+ user.getUserPasswd());
 		
-		Boolean b = new DBOperate().checkIsFrind("10000", "1");
-		System.out.println(b);
-		}
+//		Boolean b = new DBOperate().checkIsFrind("10000", "1");
+//		System.out.println(b);
+//		}
+		
+//		int fileID = dbo.insertFileToSQL("1","123.PNG",new FileInputStream("D:\\123.PNG"));
+//		System.out.println("文件写入成功，ID是 ：" + fileID);
+		
+		
+		DBOperate.insertMessageToSQL("1", "10000", "hello", 1);
+		
+		
+			
+		
+	}	
 	
 }

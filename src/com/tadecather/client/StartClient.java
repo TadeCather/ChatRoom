@@ -14,7 +14,7 @@ public class StartClient {
 		//创建client客户端窗口
 		@SuppressWarnings("unused")
 		ClientUI clientUI = new ClientUI();
-		      
+		
 	}
 
 }

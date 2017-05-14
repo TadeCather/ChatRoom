@@ -1,5 +1,6 @@
 package com.tadecather.tools;
 
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class DBOperate {
 		Statement stmt = conn.createStatement();
 		ResultSet rst = stmt.executeQuery(sql);
 		
-		while(rst.next()){
+		if(rst.next() != false){
 			user.setUserAccount(String.valueOf(rst.getInt("userID")));
 			user.setUserName(rst.getString("userName"));
 			user.setUserPasswd(rst.getString("userPasswd"));
@@ -68,9 +69,7 @@ public class DBOperate {
 			pst = conn.prepareStatement(sql);
 			pst.setString(1, friendAccount);
 			rst = pst.executeQuery();
-			rst.next();
-			Integer account = rst.getInt("friendAccount");
-			if(account.equals(null)){
+			if(rst.next() != true){
 				return false;
 			}else return true;
 		} catch (SQLException e) {
@@ -82,18 +81,47 @@ public class DBOperate {
 				rst.close();
 				pst.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 		}
-		
-		
-			
-		
 	}
 	
+	//将文件加入到数据库
+	public static int insertFileToSQL(String ownerAccount, String fileName,InputStream in) throws SQLException {
+		Connection conn = DBHelper.getConnection();
+		String sql = "INSERT INTO filestable(ownerAccount, fileName, filedata) VALUES(?,?,?)";
+		PreparedStatement pst = conn.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
+		pst.setString(1, ownerAccount);
+		pst.setString(2, fileName);
+		pst.setBinaryStream(3, in);
+		pst.executeUpdate();
+		ResultSet rst = pst.getGeneratedKeys();
+		rst.next();
+		int fileID = rst.getInt(1);
+		return fileID;
+	}
 	
+	//将消息加入到数据库
+	
+		public static void insertMessageToSQL(String senderAcccount,String receiverAccount,
+				String message, int fileID) {
+			Connection conn = DBHelper.getConnection();
+			String sql = "INSERT INTO messagesof" + senderAcccount +
+					"(receiverAccount, message, fileID) VALUES(?,?,?)";
+			
+			try {
+				PreparedStatement pst = conn.prepareStatement(sql);
+				pst.setString(1, receiverAccount);
+				pst.setString(2, message);
+				pst.setInt(3, fileID);
+				pst.execute();
+			} catch (SQLException e) {
+				System.out.println("消息插入数据库失败！");
+				e.printStackTrace();
+			}
+			
+		}
 	
 	
 	

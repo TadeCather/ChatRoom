@@ -6,13 +6,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
 
 import java.awt.*;
 
 public class ChatChooseUI extends JFrame{
-	
-	
+
+	private static final long serialVersionUID = 1L;
 	private JPanel personPanel = new JPanel();
 	private JPanel groupPanel = new JPanel();
 	private JPanel maxPanel ;
@@ -22,8 +21,10 @@ public class ChatChooseUI extends JFrame{
 	
 	private Font buttonFont = new Font("微软雅黑", Font.BOLD, 50);
 	 
-	String imagePath = "d://456.jpg";
+	String imagePath = ".//Source//picture//456.jpg";
 	Image image = Toolkit.getDefaultToolkit().createImage(imagePath);
+	
+	
 	
 	private ChatChooseUI ccu = this;
 	private ClientUI cu = null;
@@ -31,6 +32,11 @@ public class ChatChooseUI extends JFrame{
 	public ChatChooseUI(ClientUI loginUI){
 		this.cu = loginUI;
 		maxPanel = new JPanel(){
+			/**
+			 * 天知道是啥，就是消除警告的
+			 */
+			private static final long serialVersionUID = 1L;
+
 			protected void paintChildren(Graphics g){
 				g.drawImage(image, 0, 0, this);
 				super.paintChildren(g);

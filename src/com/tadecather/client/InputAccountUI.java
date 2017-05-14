@@ -15,6 +15,13 @@ import javax.swing.border.MatteBorder;
 
 class InputAccountUI extends JFrame{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
+
 	protected static final ChatChooseUI ChatChooseUI = null;
 
 	
