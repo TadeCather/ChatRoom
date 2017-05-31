@@ -63,6 +63,7 @@ public class ServerThread extends Thread{
 					case 12 : sendOridinMessageToFriend(myAccount);break;
 					case 13 : 
 					case 14 : receiveFileAndSend(myAccount);break;
+					case 15 : registerAccount();
 					case 19 : saveAccountAndSocket();break;
 					default : sendErrorMessage();
 				}
@@ -91,6 +92,30 @@ public class ServerThread extends Thread{
 		}
 	}
 	
+	
+
+	private void registerAccount() throws IOException {
+		
+		bufferMes = new byte[1024];
+		//读取20位的密码
+		dis.read(bufferMes, 0, 20);
+		String passwd  = new String(bufferMes).trim();
+		//清空数组缓存
+		bufferMes = null;
+		bufferMes = new byte[1024];
+	
+		dis.read(bufferMes, 0, bufferMes.length);
+		String name = new String(bufferMes).trim();
+		
+		String account = DBOperate.registerUser(name, passwd);
+		
+		//发送成功注册消息，并将注册的账号发送给客户端
+		
+		sendRegisterSuccessfulMEssage(account);
+		
+		
+	}
+
 	
 
 	//接受和转发文件
@@ -175,9 +200,10 @@ public class ServerThread extends Thread{
 	//将消息上传到数据库中
 	private void upLodeMessageToSQL(String ownerAccount,String receiverAccount,String message, int fileID) {
 		
-		
+		//先插入到自己的消息记录中去
 		DBOperate.insertMessageToSQL(ownerAccount, receiverAccount, message, fileID);
-		
+	    //再插入到朋友的消息记录中
+		DBOperate.insertMessageToSQL(receiverAccount, ownerAccount, message, fileID);
 	}
 
 	//发送消息给指定的客户端
@@ -203,6 +229,7 @@ public class ServerThread extends Thread{
 				entry.getValue().sendMessage(messageByte);
 				//1,表示没有文件.是我预先上传的一张图片
 				upLodeMessageToSQL(ownerAccount, friendAccount, message, 1);
+				
 				return;
 			}
 		}
@@ -223,14 +250,7 @@ public class ServerThread extends Thread{
 		}else{
 			
 			sendRepeatLoginMessage();
-			
-			
-		
-//			try {
-//				Thread.sleep(5000);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
+	
 			dis.close();
 			dos.close();
 			socket.close();
@@ -241,9 +261,6 @@ public class ServerThread extends Thread{
 	}
 
 	
-
-	
-
 	//检查用户用户账号密码是否匹配
 	private void checkAccount( String account) {
 		byte[] mesBuffer = new byte[1024];
@@ -344,6 +361,13 @@ public class ServerThread extends Thread{
 	}
 	
 
+	
+	//发送注册成功信息 97
+		private void sendRegisterSuccessfulMEssage(String account) {
+			byte[] message  = (String.valueOf(96) + String.format("%-12s", account)).getBytes();
+			sendMessage(message);
+			
+		}
 	//发送登陆失败信息
 	private void sendSuccessLoginMessage() {
 		//登陆成功类型 90

@@ -9,6 +9,31 @@ import com.tadecather.unity.User;
 
 public class DBOperate {
 	
+	public static String registerUser(String name, String passwd){
+		Connection conn = DBHelper.getConnection();
+		String sql = "INSERT INTO userAccount(userName, userPasswd) VALUES(?,?)";
+		String userAccount = null;
+		try {
+			PreparedStatement pst = conn.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
+			pst.setString(1, name);
+			pst.setString(2, passwd);
+			pst.executeUpdate();
+			ResultSet rst = pst.getGeneratedKeys();
+			rst.next();
+			userAccount = String.valueOf(rst.getInt(1));
+		
+		} catch (SQLException e) {
+			System.out.println("注册失败！");
+			e.printStackTrace();
+		}
+		
+		return userAccount;
+		
+	}
+	
+	
+	
+	
 	//查看所有用户的信息
 	public List<User> getAllUser() throws SQLException{
 		Connection conn = DBHelper.getConnection();
@@ -123,9 +148,40 @@ public class DBOperate {
 			
 		}
 	
-	
-	
-	
+	   //删除指定账户
+		public static boolean deleteUser(String account){
+			Connection conn = DBHelper.getConnection();
+			String sql = "DELETE  FROM userAccount WHERE userID = ?";
+			try {
+				PreparedStatement pst = conn.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
+				pst.setString(1, account);
+				pst.executeUpdate();
+			} catch (SQLException e) {
+				System.out.println("注册失败！");
+				e.printStackTrace();
+				return false;
+			}
+			return true;
+			
+		}
+		
+	//更改指定用户的密码
+	public static boolean updateUserpasswd(String account, String passwd){
+		Connection conn = DBHelper.getConnection();
+		String sql = "UPDATE userAccount SET userPasswd=? where userID = ?";
+		try {
+			PreparedStatement pst = conn.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
+			pst.setString(1, passwd);
+			pst.setString(2, account);
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("修改失败！");
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+		
+	}
 	
 }
 

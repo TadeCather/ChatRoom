@@ -24,7 +24,8 @@ public class ClientUI extends JFrame{
 	
 	private JPanel panelName = new JPanel();
 	private JPanel panelPasswd = new JPanel();
-	private JPanel panelButton = new JPanel();
+	private JPanel panelButton1 = new JPanel();
+	private JPanel panelButton2 = new JPanel();
 	private JPanel imagePanel;
 	
 	private JLabel JLname = new JLabel("UserName：");
@@ -32,6 +33,8 @@ public class ClientUI extends JFrame{
 	private JTextField JTnameInput  = new JTextField(15);
 	private JPasswordField JTpassswdInput  = new JPasswordField(15);
 	
+	private JButton JBregister = new JButton("Register");
+	private JButton JBchangePasswd = new JButton("Forget the Passwd");
 	private JButton JBlogin = new JButton("LOGIN");
 	private JButton JBcancle = new JButton("CONCLE");
  	
@@ -43,7 +46,6 @@ public class ClientUI extends JFrame{
 	private DataInputStream dis = null;
 	private DataOutputStream dos = null;
 	
-	private String data = null;
 	
 	public boolean isLogin = false;
 	
@@ -52,19 +54,8 @@ public class ClientUI extends JFrame{
 	
 	public User userCurrent = null;
 	
-	
 	public static boolean isConnect = false;
 	
-	public String getData() {
-		return data;
-	}
-	
-	
-
-	public void setData(String data) {
-		this.data = data;
-	}
-
 	public ClientUI(){
 		
 		//绘制背景图片
@@ -86,14 +77,20 @@ public class ClientUI extends JFrame{
 		JTpassswdInput.setText("iloveyou");
 		panelPasswd.setOpaque(false);
 		
-		panelButton.add(JBlogin);
-		panelButton.add(JBcancle);
-		panelButton.setOpaque(false);
-		panelButton.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 20));
+		panelButton2.add(JBregister);
+		panelButton2.add(JBchangePasswd);
+		panelButton2.setOpaque(false);
+		panelButton2.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 20));
+		
+		panelButton1.add(JBlogin);
+		panelButton1.add(JBcancle);
+		panelButton1.setOpaque(false);
+		panelButton1.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 5));
 		
 		imagePanel.add(panelName);
 		imagePanel.add(panelPasswd);
-		imagePanel.add(panelButton);
+		imagePanel.add(panelButton2);
+		imagePanel.add(panelButton1);
 	
 		imagePanel.setBorder(new MatteBorder(80, 130, 50, 100, Color.RED));
 		imagePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 30, 15));
@@ -151,8 +148,38 @@ public class ClientUI extends JFrame{
 			}
 		} );
 		
+		JBregister.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//先连接服务器
+				connect();
+				//注册账户
+				register();
+				
+			}
+		});
+		
+		JBchangePasswd.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+//				new changePasswd();
+			}
+		});
+		
 	}
 	
+	
+	
+	public void register() {
+		new Register(this);
+		
+	}
+
+
+
 	//连接服务器，初始化socket，并获得socket的输入输出流对象
 	public void connect(){
 		try {
@@ -201,10 +228,10 @@ public class ClientUI extends JFrame{
 	}
 	//发送登陆信息
 	public void sendLoginMessage(){
-		String name = JTnameInput.getText();
+		String account = JTnameInput.getText();
 		@SuppressWarnings("deprecation")
 		String passwd = JTpassswdInput.getText();
-		String logMes = String.format("%-12s", name) + String.format("%-20s",passwd);
+		String logMes = String.format("%-12s", account) + String.format("%-20s",passwd);
 		System.out.println(logMes+"-");
 		//请求登陆类型10
 		sendMessage((String.valueOf(10) + logMes).getBytes());
@@ -379,6 +406,12 @@ public class ClientUI extends JFrame{
 								System.out.println("请不要重复登录同一个账号！");
 								break;
 								}
+							case 96 : {
+								//注册成功信息
+								showregisterSuccessful();
+								System.out.println("注册成功！");
+								break;
+							}
 							
 							case 80 : {
 								receiveOthersMes();
@@ -398,10 +431,7 @@ public class ClientUI extends JFrame{
 								System.out.println("Error Information from Server");
 								}
 							}
-						
-						
-						
-						
+				
 						
 				} catch (IOException e) {
 					
@@ -415,6 +445,14 @@ public class ClientUI extends JFrame{
 		
 		}
 		
+		private void showregisterSuccessful() throws IOException {
+			byte[] bufferMes = new byte[1024];
+			dis.read(bufferMes, 0, bufferMes.length);
+			String account = new String(bufferMes).trim();
+			new ShowMessageFrameUI("注册账户成功！", "账号是：" + account +"  请妥善保存！" );
+			disConnect();
+		}
+
 		//接受服务端传来的文件
 		private void receiveFile() throws IOException {
 			
@@ -434,8 +472,7 @@ public class ClientUI extends JFrame{
 	  		String fileName = new String(bufferMes).trim();
 	  		
 	  		System.out.println("开始接收数据.......");
-	  		
-	  		
+
 	  		FileOutputStream fos = new FileOutputStream(new File(".//clientsource//pictures//" + fileName));
 	  		int length = 0;
 	  		byte[] inputByte = new byte[1024];
@@ -455,8 +492,8 @@ public class ClientUI extends JFrame{
 	  		fos.close();
 			
 	  		System.out.println("接收文件成功");
-	  		ChatUI.messagefromOther = ownerAccount;
-	  		ChatUI.messagefromOther = "接受文件成功" + fileName;
+	  		ChatUI.messageowenAccount = ownerAccount;
+	  		ChatUI.messagefromOther = "接受文件：" + fileName + "成功！"; 
 		}
 
 		//接受剩下的普通文本信息

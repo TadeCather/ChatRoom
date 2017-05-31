@@ -1,0 +1,98 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.all;
+use IEEE.STD_LOGIC_ARITH.all;
+use IEEE.STD_LOGIC_UNSIGNED.all;
+use WORK.CALCL_APK.all;
+
+entity SIMPLE_CALC is
+	generic( SYNTH:BOOLEAN:=FALSE);
+	port(CLK_IN:in STD_LOGIC;
+	RESET:in STD_LOGIC;
+	RESULT_OUT:out STD_LOGIC;
+end SIMPLE_CALC;
+architecture STRUCTURAL ofSIMPLE_CALC is
+	component CNTRL_FSM
+		port( DATA_FRAME:in MY_RECOED;
+			  CLK:in STD_LOGIC;
+			  RESET:in STD_LOGIC;
+			  A_IN:out STD_LOGIC_VECTOR(3 downto 0);
+			  B_IN:out STD_LOGIC_VECTOR(3 downto 0);
+			  C_IN:out STD_LOGIC;
+			  OP_CODE:out STD_LOGIC_VECTOR(3 dowmto 0);
+			  EXP:out STD_LOGIC_VECTOR(3 dowmto 0);
+			  MEM_EN:out STD_LOGIC;
+			  ALU_EN:out STD_LOGIC;
+			  COMP_EN:out STD_LOGIC;
+			  ADDR:out STD_LOGIC_VECTOR(2 dowmto 0));
+	end component;
+	
+	component ALU
+		PORT( CLK:in STD_LOGIC;
+			  OP_CODE:in STD_LOGIC_VECTOR(3 downto 0);
+			  A:in STD_LOGIC_VECTOR(3 dowmto 0);
+			  B:in STD_LOGIC_VECTOR(3 dowmto 0);
+			  C:in STD_LOGIC;
+			  Y:out STD_LOGIC_VECTOR(3 downto 0);
+			  EN:in STD_LOGIC;
+	end component;
+	
+	component MEM
+		port ( CLK:STD_LOGIC;
+			   EN:STD_LOGIC;
+			   ADDR:in STD_LOGIC_VECTOR(2 downto 0);
+			   DATA_FRAME: out MY_RECOED);
+	end component;
+	
+	component COMP
+		port( CLK:in STD_LOGIC;
+			  EXPECTED:in STD_LOGIC_VECTOR(3 dowmto 0);
+			  ALU_OUT:in STD_LOGIC_VECTOR(3 dowmto 0);
+			  RESULT:out STD_LOGIC;
+			  EN: in STD_LOGIC);
+	end component;
+
+	component COMP_RTL
+		port( CLK:in STD_LOGIC;
+			  EXPECTED:in STD_LOGIC_VECTOR(3 downto 0);
+			  ALU_OUT: in STD_LOGIC_VECTOR(3 downto 0);
+			  RESULT:out STD_LOGIC;
+			  EN:is STD_LOGIC);
+	end component;
+	
+	signal EXP_OUT_SIG:STD_LOGIC_VECTOR(3 downto 0);
+	signal A_IN_SIG:STD_LOGIC_VECTOR(3 downto 0);
+	signal B_IN_SIG:STD_LOGIC_VECTOR(3 downto 0);
+	signal OP_CODE_SIG:STD_LOGIC_VECTOR(3 downto 0);
+	signal CI_SIG:STD_LOGIC;
+	signal ALU_EN_SIG:STD_LOGIC;
+	signal COMP_EN_SIG:STD_LOGIC;
+	signal MEM_EN_SIG:STD_LOGIC;
+	signal ALU_OUT_SIG:STD_LOGIC_VECTOR(3 downto 0);
+	signal ADDR_SIG:STD_LOGIC_VECTOR(2 downto 0);
+	signal DATA_FRAME_SIG:MY_RECOED;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

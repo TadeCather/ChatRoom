@@ -195,7 +195,7 @@ public class ChatUI extends JFrame{
 					messagefromOther = null;
 					messageowenAccount = null;
 				}
-			
+
 			}
 			
 		}
