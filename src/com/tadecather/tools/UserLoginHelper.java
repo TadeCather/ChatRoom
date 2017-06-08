@@ -3,7 +3,6 @@ package com.tadecather.tools;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 
-import com.mysql.jdbc.util.Base64Decoder;
 import com.tadecather.unity.User;
 
 public class UserLoginHelper {

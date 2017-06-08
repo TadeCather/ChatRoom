@@ -5,6 +5,11 @@ import java.awt.Insets;
 
 public class GBCHelper extends GridBagConstraints{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public GBCHelper(int x, int y, int w, int h){
 		this.gridx = x;
 		this.gridy = y;

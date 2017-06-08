@@ -11,9 +11,7 @@ public class DBHelper {
 	public static final String user = "root";
 	public static final String passwd = "root";
 	
-	private static Connection conn;
-	
-	
+	private  static Connection conn;
 	//╬╡л╛сО╬Д©Иё╛сеох╪сть
 	static {
 		try{

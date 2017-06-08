@@ -38,7 +38,7 @@ public class ClientUI extends JFrame{
 	private JButton JBlogin = new JButton("LOGIN");
 	private JButton JBcancle = new JButton("CONCLE");
  	
-	String imagePath = ".//Source//picture//123.PNG";
+	String imagePath = ".\\Source\\picture\\123.PNG";
 	Image image = Toolkit.getDefaultToolkit().createImage(imagePath);
 	
 	
